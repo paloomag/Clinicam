@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, KeyboardAvoidingView, StyleSheet, TextInput, Pressable, TouchableOpacity, Image, Animated, Alert, Modal } from 'react-native';
+import { View, Text, KeyboardAvoidingView, StyleSheet, TextInput, Pressable, TouchableOpacity, Image, Animated, Alert, Modal, Linking } from 'react-native';
 import StatusBarColor from '../components/StatusBarColor'
 import api from '../services/API';
 import storage from '../services/Storage'
@@ -11,14 +11,22 @@ export default function Login({ navigation }) {
     const [user, setUser] = useState();
     const [pass, setPass] = useState();
     const [loading, setLoading] = useState(true);
+    const [rateModal, setRateModal] = useState(false);
 
     useEffect(() => {
         async function pegar() {
             if (await storage.getData('@storage_user') && await storage.getData('@storage_pass')) {
                 const user = await storage.getData('@storage_user');
                 const pass = await storage.getData('@storage_pass');
+                const firstAcess = await storage.getData('@storage_firstAcess');
+                const rated = await storage.getData('@storage_rated');
+                console.log(firstAcess, rated);
+                if (firstAcess !== null && rated === null) {
+                    setRateModal(true);
+                }
                 setUser(user);
                 setPass(pass);
+
             }
         }
         Animated.parallel([
@@ -37,7 +45,11 @@ export default function Login({ navigation }) {
         pegar();
     }, []);
 
-
+    async function handleRate() {
+        await storage.storeData('@storage_rated', 'true');
+        setRateModal(false);
+        Linking.openURL('https://play.google.com/store/apps/details?id=com.cameraclinitec');
+    }
 
     async function handleLogin() {
         if (!user || !pass) {
@@ -45,42 +57,45 @@ export default function Login({ navigation }) {
         } else {
             await storage.storeData('@storage_user', user)
             await storage.storeData('@storage_pass', pass)
-
-            const response = await api.get(`/autenticacao/autentica/clinicam/${user}/${pass}`).then(res => {
+            try {
+                const response = await api.get(`/autenticacao/autentica/clinicam/${user}/${pass}`)
                 setLoading(false)
-                return res
-            })
-            if (loading) {
-                setLoading(true)
-                navigation.navigate('Loading');
-            }
-            const subscriberId = JSON.parse(response.data[0]);
-
-            if (subscriberId.access == true) {
-                const autoriza = await api.get(`/autenticacao/autoriza/clinicam/${subscriberId.subscriberId}`);
-                console.log('Autorização ' + autoriza.data);
-                if (!autoriza) {
-                    Alert.alert('Usuário não autorizado')
-                } else {
-                    const response = await api.post(`/autenticacao/gerasessao/clinicam/${subscriberId.subscriberId}`);
-                    const token = response.data[0].ses_token;
-                    const cod = response.data[0].ses_codigo;
-
-                    if (!token || !cod == 'undefined') {
-                        Alert.alert('Já está logado, tenta novamente')
-                        const sessao_logada = await storage.getData('@storage_sessao')
-                        await api.put(`/autenticacao/encerrasessao/clinicam/${sessao_logada}`)
-                        navigation.navigate('Login');
-                    } else {
-                        api.post(`/autenticacao/registraatividade/clinicam/${cod}`)
-                        await storage.storeData('@storage_sessao', token);
-                        await storage.storeData('@storage_cod', cod);
-                        navigation.navigate('Inicio');
-                    }
+                await storage.storeData('@storage_firstAcess', 'true')
+                if (loading) {
+                    setLoading(true)
+                    navigation.navigate('Loading');
                 }
-            } else {
-                navigation.navigate('Login')
-                Alert.alert('Usuário ou senha inválida');
+                const subscriberId = JSON.parse(response.data[0]);
+
+                if (subscriberId.access == true) {
+                    const autoriza = await api.get(`/autenticacao/autoriza/clinicam/${subscriberId.subscriberId}`);
+                    console.log('Autorização ' + autoriza.data);
+                    if (!autoriza) {
+                        Alert.alert('Usuário não autorizado')
+                    } else {
+                        const response = await api.post(`/autenticacao/gerasessao/clinicam/${subscriberId.subscriberId}`);
+                        const token = response.data[0].ses_token;
+                        const cod = response.data[0].ses_codigo;
+
+                        if (!token || !cod == 'undefined') {
+                            Alert.alert('Já está logado, tenta novamente')
+                            const sessao_logada = await storage.getData('@storage_sessao')
+                            await api.put(`/autenticacao/encerrasessao/clinicam/${sessao_logada}`)
+                            navigation.navigate('Login');
+                        } else {
+                            api.post(`/autenticacao/registraatividade/clinicam/${cod}`)
+                            await storage.storeData('@storage_sessao', token);
+                            await storage.storeData('@storage_cod', cod);
+                            navigation.navigate('Inicio');
+                        }
+                    }
+                } else {
+                    navigation.navigate('Login')
+                    Alert.alert('Usuário ou senha inválida');
+                }
+            } catch (error) {
+                console.log(error)
+                Alert.alert('Algo deu errado!', 'Texte mais tarde')
             }
         }
     }
@@ -131,9 +146,30 @@ export default function Login({ navigation }) {
                     <Modal
                         animationType="slide"
                         transparent={true}
+                        visible={rateModal}
+                        onRequestClose={() => {
+                            setModalVisible(!modalVisible);
+                        }}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Avalie a nosso APP no PlayStore!</Text>
+                            <Text style={styles.modalText}>⭐⭐⭐⭐⭐</Text>
+                            <TouchableOpacity
+                                style={styles.buttonClose}
+                                onPress={handleRate}>
+                                <Text style={styles.textStyle}>Avaliar agora</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.buttonClose}
+                                onPress={() => setRateModal(false)}>
+                                <Text style={styles.textStyle}>Mais tarde</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
                         visible={modalVisible}
                         onRequestClose={() => {
-                            Alert.alert("Modal has been closed.");
                             setModalVisible(!modalVisible);
                         }}>
                         <View style={styles.modalView}>
