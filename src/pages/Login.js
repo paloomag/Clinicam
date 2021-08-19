@@ -26,7 +26,6 @@ export default function Login({ navigation }) {
                 }
                 setUser(user);
                 setPass(pass);
-
             }
         }
         Animated.parallel([
@@ -142,54 +141,55 @@ export default function Login({ navigation }) {
                     <Text style={styles.textobotao}>Entrar</Text>
                 </TouchableOpacity>
 
-                <View>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={rateModal}
-                        onRequestClose={() => {
-                            setModalVisible(!modalVisible);
-                        }}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Avalie a nosso APP no PlayStore!</Text>
-                            <Text style={styles.modalText}>⭐⭐⭐⭐⭐</Text>
-                            <TouchableOpacity
-                                style={styles.buttonClose}
-                                onPress={handleRate}>
-                                <Text style={styles.textStyle}>Avaliar agora</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.buttonClose}
-                                onPress={() => setRateModal(false)}>
-                                <Text style={styles.textStyle}>Mais tarde</Text>
-                            </TouchableOpacity>
+                <Modal
+                    style={{ height: 20 }}
+                    animationType="slide"
+                    transparent={false}
+                    visible={rateModal}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Avalie o nosso APP na PlayStore!</Text>
+                        <Text style={styles.modalText}>⭐⭐⭐⭐⭐</Text>
+                        <TouchableOpacity
+                            style={styles.buttonClose}
+                            onPress={handleRate}>
+                            <Text style={styles.textStyle}>Avaliar agora</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.buttonClose2}
+                            onPress={() => setRateModal(false)}>
+                            <Text style={styles.textStyle2}>Mais tarde</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Para visualizar as câmeras informe seu Usuário e Senha utilizado para acessar a Área do Cliente!</Text>
+                        <View>
+                            <Image style={styles.modalImage} source={require('../img/areacliente.png')} />
                         </View>
-                    </Modal>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                            setModalVisible(!modalVisible);
-                        }}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Para visualizar as câmeras informe seu Usuário e Senha utilizado para acessar a Área do Cliente!</Text>
-                            <View>
-                                <Image style={styles.modalImage} source={require('../img/areacliente.png')} />
-                            </View>
-                            <Pressable
-                                style={styles.buttonClose}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.textStyle}>Ok, entendi</Text>
-                            </Pressable>
-                        </View>
-                    </Modal>
-                    <Pressable
-                        style={[styles.button, styles.buttonOpen]}
-                        onPress={() => setModalVisible(true)}>
-                        <Text>Como acessar?</Text>
-                    </Pressable>
-                </View>
+                        <Pressable
+                            style={styles.buttonClose}
+                            onPress={() => setModalVisible(!modalVisible)}>
+                            <Text style={styles.textStyle}>Ok, entendi</Text>
+                        </Pressable>
+                    </View>
+                </Modal>
+                <Pressable
+                    style={[styles.button, styles.buttonOpen]}
+                    onPress={() => setModalVisible(true)}>
+                    <Text>Como acessar?</Text>
+                </Pressable>
 
             </Animated.View>
 
@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5
     },
+
     centerlogo: {
         alignItems: 'center',
         backgroundColor: 'rgb(45,77,118)',
@@ -273,21 +274,6 @@ const styles = StyleSheet.create({
         padding: 5,
         justifyContent: 'center',
     },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
-    },
     buttonClose: {
         backgroundColor: '#FF9700',
         width: '90%',
@@ -295,9 +281,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 5,
+        marginTop: 10,
+    },
+    buttonClose2: {
+        width: '90%',
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    modalButton: {
+        marginTop: 10,
     },
     textStyle: {
         color: 'white',
+    },
+    textStyle2: {
+        color: 'black',
     },
     modalImage: {
         alignItems: "center",
