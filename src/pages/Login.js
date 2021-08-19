@@ -141,8 +141,6 @@ export default function Login({ navigation }) {
                     <Text style={styles.textobotao}>Entrar</Text>
                 </TouchableOpacity>
 
-
-
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -222,7 +220,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5
     },
-
     centerlogo: {
         alignItems: 'center',
         backgroundColor: 'rgb(45,77,118)',
