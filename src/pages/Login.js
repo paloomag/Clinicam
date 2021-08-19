@@ -141,30 +141,7 @@ export default function Login({ navigation }) {
                     <Text style={styles.textobotao}>Entrar</Text>
                 </TouchableOpacity>
 
-                <Modal
-                    style={{ height: 20 }}
-                    animationType="slide"
-                    transparent={false}
-                    visible={rateModal}
-                    onRequestClose={() => {
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Avalie o nosso APP na PlayStore!</Text>
-                        <Text style={styles.modalText}>⭐⭐⭐⭐⭐</Text>
-                        <TouchableOpacity
-                            style={styles.buttonClose}
-                            onPress={handleRate}>
-                            <Text style={styles.textStyle}>Avaliar agora</Text>
-                        </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.buttonClose2}
-                            onPress={() => setRateModal(false)}>
-                            <Text style={styles.textStyle2}>Mais tarde</Text>
-                        </TouchableOpacity>
-                    </View>
-                </Modal>
 
                 <Modal
                     animationType="slide"
@@ -192,7 +169,29 @@ export default function Login({ navigation }) {
                 </Pressable>
 
             </Animated.View>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={rateModal}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}>
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>Avalie o nosso APP na PlayStore!</Text>
+                    <Text style={styles.modalText}>⭐⭐⭐⭐⭐</Text>
+                    <TouchableOpacity
+                        style={styles.buttonClose}
+                        onPress={handleRate}>
+                        <Text style={styles.textStyle}>Avaliar agora</Text>
+                    </TouchableOpacity>
 
+                    <TouchableOpacity
+                        style={styles.buttonClose2}
+                        onPress={() => setRateModal(false)}>
+                        <Text style={styles.textStyle2}>Mais tarde</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
             <View style={styles.footer}>
                 <Text>Copyright © Clinitec 2021</Text>
             </View>
@@ -208,6 +207,7 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     modalView: {
+        marginTop: 200,
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
