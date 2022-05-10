@@ -1,5 +1,4 @@
 # Clinicam
- 
 Aplicativo em react-native, para clientes da empresa Clinitec, terem acesso a diversas câmeras em várias cidades vizinhas. 
 - Login com autenticação, sessão.
 - Animation no Login.
